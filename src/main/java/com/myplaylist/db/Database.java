@@ -48,8 +48,8 @@ public class Database {
                     ")";
             stmt.execute(createUsersTable);
 
-            // Create songs table (if it doesn't exist)
-            String createSongsTable = "CREATE TABLE IF NOT EXISTS songs (" +
+            // Create videos table (if it doesn't exist)
+            String createVideosTable = "CREATE TABLE IF NOT EXISTS videos (" +
                     "id INT AUTO_INCREMENT PRIMARY KEY," +
                     "title VARCHAR(255) NOT NULL," +
                     "artist VARCHAR(255) NOT NULL," +
@@ -58,10 +58,9 @@ public class Database {
                     "genre VARCHAR(100)," +
                     "duration DOUBLE" +
                     ")";
-            stmt.execute(createSongsTable);
+            stmt.execute(createVideosTable);
 
             // Insert dummy data
-            insertDummyData();
 
         } catch (SQLException e) {
             // If the database doesn't exist, an exception is thrown.
@@ -71,20 +70,6 @@ public class Database {
             } else {
                 e.printStackTrace();
             }
-        }
-    }
-
-    private static void insertDummyData() {
-        UserDAO userDAO = new UserDAO();
-        // Add admin user if not exists
-        if (userDAO.findUserByUsername("admin") == null) {
-            userDAO.addUser(new User("admin", "password", "admin"));
-            System.out.println("Dummy admin user created.");
-        }
-        // Add normal user if not exists
-        if (userDAO.findUserByUsername("user") == null) {
-            userDAO.addUser(new User("user", "password", "user"));
-            System.out.println("Dummy regular user created.");
         }
     }
 }

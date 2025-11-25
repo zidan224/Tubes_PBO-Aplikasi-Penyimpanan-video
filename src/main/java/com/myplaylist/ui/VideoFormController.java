@@ -1,5 +1,5 @@
 package com.myplaylist.ui;
 
-public class SongFormController {
+public class VideoFormController {
     
 }
