@@ -1,0 +1,2 @@
+Main-Class: com.myplaylist.main
+Class-Path: lib/sqlite-jdbc.jar
