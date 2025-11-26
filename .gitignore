@@ -1,0 +1,54 @@
+# ===========================
+# 1. FILE KOMPILASI JAVA (SAMPAH)
+# ===========================
+# File .class hasil compile tidak perlu diupload
+*.class
+
+# Folder output hasil build (biasanya VS Code pakai bin/ atau out/)
+bin/
+out/
+build/
+
+# ===========================
+# 2. FILE SYSTEM (SAMPAH OS)
+# ===========================
+# Sampah Mac
+.DS_Store
+
+# Sampah Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ===========================
+# 3. KONFIGURASI IDE (PENTING BUAT TIM)
+# ===========================
+# Biar settingan VS Code kamu gak nimpah settingan temenmu
+.vscode/
+
+# Kalau ada temen yg pake IntelliJ IDEA
+.idea/
+*.iml
+
+# Kalau ada temen yg pake Eclipse/NetBeans
+.settings/
+.classpath
+.project
+nbproject/
+
+# ===========================
+# 4. LOGS & RAHASIA
+# ===========================
+*.log
+.env
+# (Tetap kita tulis .env buat jaga-jaga kalau nanti ada yg iseng bikin)
+
+# ===========================
+# 5. DEPENDENCIES (LIBRARY) - BAGIAN KRUSIAL
+# ===========================
+# Abaikan semua file .jar di mana saja...
+*.jar
+
+# ...KECUALI file .jar yang ada di dalam folder lib/
+# (Supaya temen tim kamu bisa dapet driver MySQL pas git pull)
+!lib/*.jar
