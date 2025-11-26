@@ -1,7 +1,7 @@
 package com.myplaylist.ui;
 
+import com.myplaylist.dao.UserDAO;
 import com.myplaylist.model.User;
-import com.myplaylist.db.UserDAO;
 
 import javax.swing.*;
 import java.awt.*;

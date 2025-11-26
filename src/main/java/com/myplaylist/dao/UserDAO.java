@@ -1,4 +1,4 @@
-package com.myplaylist.db; // 1. Package disesuaikan
+package com.myplaylist.dao; // 1. Package disesuaikan
 
 import com.myplaylist.db.Database; // Import koneksi database
 import com.myplaylist.model.User;  // Import model user

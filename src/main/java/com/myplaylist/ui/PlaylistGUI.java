@@ -1,7 +1,7 @@
 package com.myplaylist.ui;
 
+import com.myplaylist.dao.VideoDAO;
 import com.myplaylist.model.User;
-import com.myplaylist.db.VideoDAO;
 import com.myplaylist.model.Video;
 
 import javax.swing.*;
