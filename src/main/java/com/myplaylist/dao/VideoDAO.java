@@ -1,5 +1,4 @@
 package com.myplaylist.dao;
-
 import com.myplaylist.db.Database;
 import com.myplaylist.model.Video;
 import java.sql.Connection;
