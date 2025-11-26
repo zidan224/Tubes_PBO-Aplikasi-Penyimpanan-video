@@ -68,9 +68,9 @@ public class LoginGUI extends JFrame {
 
         if (user != null) {
             JOptionPane.showMessageDialog(this, "Login successful! Welcome " + user.getRole() + ".");
-            dispose();
+            this.setVisible(false);
             // Open the main application window and pass the user object
-            new PlaylistGUI(user).setVisible(true);
+            new PlaylistGUI(user, this).setVisible(true); // <-- Kirim 'this' (LoginGUI)
         } else {
             JOptionPane.showMessageDialog(this, "Invalid username or password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
         }
