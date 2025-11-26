@@ -1,2 +1,2 @@
 Main-Class: com.myplaylist.main
-Class-Path: lib/sqlite-jdbc.jar
+Class-Path: lib/dotenv-java-3.0.0.jar lib/mysql-connector-j-8.2.0.jar

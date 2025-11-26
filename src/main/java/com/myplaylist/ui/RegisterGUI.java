@@ -1,7 +1,7 @@
 package com.myplaylist.ui;
 
-import com.myplaylist.auth.User;
-import com.myplaylist.db.UserDAO;
+import com.myplaylist.dao.UserDAO;
+import com.myplaylist.model.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -80,7 +80,7 @@ public class RegisterGUI extends JFrame {
         if (userDAO.addUser(newUser)) {
             JOptionPane.showMessageDialog(this, "Registration successful! Welcome.");
             dispose(); // Close the register window
-            new PlaylistGUI(newUser).setVisible(true); // Open the main app window
+            new PlaylistGUI(newUser, new LoginGUI()).setVisible(true); // Open the main app window
         } else {
             JOptionPane.showMessageDialog(this, "Registration failed. Username might already exist.", "Error", JOptionPane.ERROR_MESSAGE);
         }

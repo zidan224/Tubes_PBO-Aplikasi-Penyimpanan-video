@@ -3,17 +3,17 @@ package com.myplaylist.model;
 public class Video {
     private int id;
     private String title;
-    private String artist;
-    private String album;
+    private String creator;
+    private String category;
     private int year;
     private String genre;
     private double duration;
 
-    public Video(int id, String title, String artist, String album, int year, String genre, double duration) {
+    public Video(int id, String title, String creator, String category, int year, String genre, double duration) {
         this.id = id;
         this.title = title;
-        this.artist = artist;
-        this.album = album;
+        this.creator = creator;
+        this.category = category;
         this.year = year;
         this.genre = genre;
         this.duration = duration;
@@ -27,12 +27,12 @@ public class Video {
         return title;
     }
 
-    public String getArtist() {
-        return artist;
+    public String getCreator() {
+        return creator;
     }
 
-    public String getAlbum() {
-        return album;
+    public String getCategory() {
+        return category;
     }
 
     public int getYear() {
@@ -51,12 +51,12 @@ public class Video {
         this.title = title;
     }
 
-    public void setArtist(String artist) {
-        this.artist = artist;
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 
-    public void setAlbum(String album) {
-        this.album = album;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public void setYear(int year) {
@@ -71,3 +71,4 @@ public class Video {
         this.duration = duration;
     }
 }
+
