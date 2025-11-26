@@ -20,7 +20,7 @@ public class PlaylistGUI extends JFrame {
         this.loggedInUser = user;
         this.loginFrame = loginFrame;
         this.appFacade = new AppFacade(); // Inisialisasi Facade
-
+        this.appFacade.setCurrentUser(user);
         setTitle("My Playlist App - Welcome " + user.getUsername());
         setSize(900, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

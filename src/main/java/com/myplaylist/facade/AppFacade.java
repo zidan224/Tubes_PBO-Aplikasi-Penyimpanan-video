@@ -19,6 +19,10 @@ public class AppFacade {
         this.watchlistDAO = new WatchlistDAO();
     }
 
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
+    }
+
     // --- User Management ---
     public boolean login(String username, String password) {
         try {
