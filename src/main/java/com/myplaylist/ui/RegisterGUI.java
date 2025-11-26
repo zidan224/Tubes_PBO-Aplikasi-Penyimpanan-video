@@ -1,6 +1,6 @@
 package com.myplaylist.ui;
 
-import com.myplaylist.auth.User;
+import com.myplaylist.model.User;
 import com.myplaylist.db.UserDAO;
 
 import javax.swing.*;

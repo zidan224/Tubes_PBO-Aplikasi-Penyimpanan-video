@@ -1,6 +1,6 @@
 package com.myplaylist.ui;
 
-import com.myplaylist.auth.User;
+import com.myplaylist.model.User;
 import com.myplaylist.db.VideoDAO;
 import com.myplaylist.model.Video;
 
@@ -84,7 +84,7 @@ public class PlaylistGUI extends JFrame {
         JPanel videoPanel = new JPanel(new BorderLayout());
 
         // Table for videos
-        String[] columnNames = {"ID", "Title", "Artist", "Album", "Year", "Genre", "Duration"};
+        String[] columnNames = {"ID", "Title", "Creator", "Category", "Year", "Genre", "Duration"};
         tableModel = new DefaultTableModel(columnNames, 0);
         videoTable = new JTable(tableModel);
 
@@ -141,8 +141,8 @@ public class PlaylistGUI extends JFrame {
             Object[] row = {
                     video.getId(),
                     video.getTitle(),
-                    video.getArtist(),
-                    video.getAlbum(),
+                    video.getCreator(),
+                    video.getCategory(),
                     video.getYear(),
                     video.getGenre(),
                     video.getDuration()

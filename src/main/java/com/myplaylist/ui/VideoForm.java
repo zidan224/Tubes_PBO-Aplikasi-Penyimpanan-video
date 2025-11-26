@@ -8,8 +8,8 @@ import java.awt.*;
 
 public class VideoForm extends JDialog {
     private JTextField titleField = new JTextField(20);
-    private JTextField artistField = new JTextField(20);
-    private JTextField albumField = new JTextField(20);
+    private JTextField creatorField = new JTextField(20);
+    private JTextField categoryField = new JTextField(20);
     private JTextField yearField = new JTextField(20);
     private JTextField genreField = new JTextField(20);
     private JTextField durationField = new JTextField(20);
@@ -30,10 +30,10 @@ public class VideoForm extends JDialog {
 
         add(new JLabel("Title:"));
         add(titleField);
-        add(new JLabel("Artist:"));
-        add(artistField);
-        add(new JLabel("Album:"));
-        add(albumField);
+        add(new JLabel("Creator:"));
+        add(creatorField);
+        add(new JLabel("Category:"));
+        add(categoryField);
         add(new JLabel("Year:"));
         add(yearField);
         add(new JLabel("Genre:"));
@@ -45,8 +45,8 @@ public class VideoForm extends JDialog {
 
         if (video != null) {
             titleField.setText(video.getTitle());
-            artistField.setText(video.getArtist());
-            albumField.setText(video.getAlbum());
+            creatorField.setText(video.getCreator());
+            categoryField.setText(video.getCategory());
             yearField.setText(String.valueOf(video.getYear()));
             genreField.setText(video.getGenre());
             durationField.setText(String.valueOf(video.getDuration()));
@@ -62,21 +62,21 @@ public class VideoForm extends JDialog {
     private void saveVideo() {
         // Validation can be added here
         String title = titleField.getText();
-        String artist = artistField.getText();
-        String album = albumField.getText();
+        String creator = creatorField.getText();
+        String category = categoryField.getText();
         int year = Integer.parseInt(yearField.getText());
         String genre = genreField.getText();
         double duration = Double.parseDouble(durationField.getText());
 
         if (video == null) {
             // Add new video
-            Video newVideo = new Video(0, title, artist, album, year, genre, duration);
+            Video newVideo = new Video(0, title, creator, category, year, genre, duration);
             videoDAO.addVideo(newVideo);
         } else {
             // Update existing video
             video.setTitle(title);
-            video.setArtist(artist);
-            video.setAlbum(album);
+            video.setCreator(creator);
+            video.setCategory(category);
             video.setYear(year);
             video.setGenre(genre);
             video.setDuration(duration);

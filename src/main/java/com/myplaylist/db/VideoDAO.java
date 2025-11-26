@@ -23,8 +23,8 @@ public class VideoDAO {
                 videos.add(new Video(
                         rs.getInt("id"),
                         rs.getString("title"),
-                        rs.getString("artist"),
-                        rs.getString("album"),
+                        rs.getString("creator"),
+                        rs.getString("category"),
                         rs.getInt("year"),
                         rs.getString("genre"),
                         rs.getDouble("duration")
@@ -37,13 +37,13 @@ public class VideoDAO {
     }
 
     public boolean addVideo(Video video) {
-        String sql = "INSERT INTO videos(title, artist, album, year, genre, duration) VALUES(?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO videos(title, creator, category, year, genre, duration) VALUES(?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = Database.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, video.getTitle());
-            pstmt.setString(2, video.getArtist());
-            pstmt.setString(3, video.getAlbum());
+            pstmt.setString(2, video.getCreator());
+            pstmt.setString(3, video.getCategory());
             pstmt.setInt(4, video.getYear());
             pstmt.setString(5, video.getGenre());
             pstmt.setDouble(6, video.getDuration());
@@ -56,13 +56,13 @@ public class VideoDAO {
     }
 
     public boolean updateVideo(Video video) {
-        String sql = "UPDATE videos SET title = ?, artist = ?, album = ?, year = ?, genre = ?, duration = ? WHERE id = ?";
+        String sql = "UPDATE videos SET title = ?, creator = ?, category = ?, year = ?, genre = ?, duration = ? WHERE id = ?";
 
         try (Connection conn = Database.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, video.getTitle());
-            pstmt.setString(2, video.getArtist());
-            pstmt.setString(3, video.getAlbum());
+            pstmt.setString(2, video.getCreator());
+            pstmt.setString(3, video.getCategory());
             pstmt.setInt(4, video.getYear());
             pstmt.setString(5, video.getGenre());
             pstmt.setDouble(6, video.getDuration());
@@ -99,8 +99,8 @@ public class VideoDAO {
                 return new Video(
                         rs.getInt("id"),
                         rs.getString("title"),
-                        rs.getString("artist"),
-                        rs.getString("album"),
+                        rs.getString("creator"),
+                        rs.getString("category"),
                         rs.getInt("year"),
                         rs.getString("genre"),
                         rs.getDouble("duration")
