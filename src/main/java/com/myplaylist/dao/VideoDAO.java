@@ -2,11 +2,7 @@ package com.myplaylist.dao;
 
 import com.myplaylist.db.Database;
 import com.myplaylist.model.Video;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +13,8 @@ public class VideoDAO {
         String sql = "SELECT * FROM videos";
 
         try (Connection conn = Database.getInstance().getConnection();
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
                 videos.add(new Video(
@@ -28,7 +24,9 @@ public class VideoDAO {
                         rs.getString("category"),
                         rs.getInt("year"),
                         rs.getString("genre"),
-                        rs.getDouble("duration")));
+                        rs.getDouble("duration"),
+                        rs.getString("thumbnail_path") // <--- Ambil Path
+                ));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -37,16 +35,18 @@ public class VideoDAO {
     }
 
     public boolean addVideo(Video video) {
-        String sql = "INSERT INTO videos(title, creator, category, year, genre, duration) VALUES(?, ?, ?, ?, ?, ?)";
+        // Query UPDATE: Tambah kolom thumbnail_path
+        String sql = "INSERT INTO videos(title, creator, category, year, genre, duration, thumbnail_path) VALUES(?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = Database.getInstance().getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, video.getTitle());
             pstmt.setString(2, video.getCreator());
             pstmt.setString(3, video.getCategory());
             pstmt.setInt(4, video.getYear());
             pstmt.setString(5, video.getGenre());
             pstmt.setDouble(6, video.getDuration());
+            pstmt.setString(7, video.getThumbnailPath()); // <--- Simpan Path
             pstmt.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -56,17 +56,19 @@ public class VideoDAO {
     }
 
     public boolean updateVideo(Video video) {
-        String sql = "UPDATE videos SET title = ?, creator = ?, category = ?, year = ?, genre = ?, duration = ? WHERE id = ?";
+        // Query UPDATE: Tambah kolom thumbnail_path
+        String sql = "UPDATE videos SET title = ?, creator = ?, category = ?, year = ?, genre = ?, duration = ?, thumbnail_path = ? WHERE id = ?";
 
         try (Connection conn = Database.getInstance().getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, video.getTitle());
             pstmt.setString(2, video.getCreator());
             pstmt.setString(3, video.getCategory());
             pstmt.setInt(4, video.getYear());
             pstmt.setString(5, video.getGenre());
             pstmt.setDouble(6, video.getDuration());
-            pstmt.setInt(7, video.getId());
+            pstmt.setString(7, video.getThumbnailPath()); // <--- Update Path
+            pstmt.setInt(8, video.getId());
             pstmt.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -77,9 +79,8 @@ public class VideoDAO {
 
     public boolean deleteVideo(int id) {
         String sql = "DELETE FROM videos WHERE id = ?";
-
         try (Connection conn = Database.getInstance().getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
             return true;
@@ -92,7 +93,7 @@ public class VideoDAO {
     public Video getVideoById(int id) {
         String sql = "SELECT * FROM videos WHERE id = ?";
         try (Connection conn = Database.getInstance().getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
@@ -103,7 +104,9 @@ public class VideoDAO {
                         rs.getString("category"),
                         rs.getInt("year"),
                         rs.getString("genre"),
-                        rs.getDouble("duration"));
+                        rs.getDouble("duration"),
+                        rs.getString("thumbnail_path") // <--- Ambil Path
+                );
             }
         } catch (SQLException e) {
             e.printStackTrace();

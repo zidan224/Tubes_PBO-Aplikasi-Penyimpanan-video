@@ -1,8 +1,13 @@
 package com.myplaylist.iterator;
 
-// Menerapkan Generic <T> agar bisa dipakai untuk Video, User, atau tipe data lain
 public interface Iterator<T> {
     boolean hasNext();
-
     T next();
+    
+    // Fitur tambahan untuk Player (Back/Prev)
+    boolean hasPrev();
+    T prev();
+    
+    // Untuk mengambil item saat ini tanpa pindah
+    T current();
 }

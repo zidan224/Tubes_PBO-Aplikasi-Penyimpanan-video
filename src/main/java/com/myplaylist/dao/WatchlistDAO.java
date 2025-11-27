@@ -8,8 +8,6 @@ import java.util.List;
 
 public class WatchlistDAO {
 
-    // 1. AMBIL VIDEO MILIK USER TERTENTU (JOIN TABLE)
-    // Ini query paling penting: Menggabungkan tabel videos dan watchlist
     public List<Video> getWatchlistByUserId(int userId) {
         List<Video> userVideos = new ArrayList<>();
         String sql = "SELECT v.* FROM videos v " +
@@ -17,7 +15,7 @@ public class WatchlistDAO {
                 "WHERE w.user_id = ?";
 
         try (Connection conn = Database.getInstance().getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, userId);
             ResultSet rs = pstmt.executeQuery();
@@ -30,7 +28,9 @@ public class WatchlistDAO {
                         rs.getString("category"),
                         rs.getInt("year"),
                         rs.getString("genre"),
-                        rs.getDouble("duration")));
+                        rs.getDouble("duration"),
+                        rs.getString("thumbnail_path") // <--- Ambil thumbnail juga
+                ));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -38,15 +38,12 @@ public class WatchlistDAO {
         return userVideos;
     }
 
-    // 2. TAMBAH VIDEO KE WATCHLIST
     public boolean addVideoToWatchlist(int userId, int videoId) {
-        // Cek dulu biar gak duplikat (Opsional tapi bagus)
-        if (isDuplicate(userId, videoId))
-            return false;
+        if (isDuplicate(userId, videoId)) return false;
 
         String sql = "INSERT INTO watchlist (user_id, video_id, status) VALUES (?, ?, 'QUEUED')";
         try (Connection conn = Database.getInstance().getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, userId);
             pstmt.setInt(2, videoId);
             pstmt.executeUpdate();
@@ -57,11 +54,10 @@ public class WatchlistDAO {
         }
     }
 
-    // 3. HAPUS VIDEO DARI WATCHLIST
     public boolean removeVideoFromWatchlist(int userId, int videoId) {
         String sql = "DELETE FROM watchlist WHERE user_id = ? AND video_id = ?";
         try (Connection conn = Database.getInstance().getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, userId);
             pstmt.setInt(2, videoId);
             pstmt.executeUpdate();
@@ -72,15 +68,14 @@ public class WatchlistDAO {
         }
     }
 
-    // Cek Duplikat
     private boolean isDuplicate(int userId, int videoId) {
         String sql = "SELECT id FROM watchlist WHERE user_id = ? AND video_id = ?";
         try (Connection conn = Database.getInstance().getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, userId);
             pstmt.setInt(2, videoId);
             ResultSet rs = pstmt.executeQuery();
-            return rs.next(); // True kalau sudah ada
+            return rs.next();
         } catch (SQLException e) {
             return false;
         }

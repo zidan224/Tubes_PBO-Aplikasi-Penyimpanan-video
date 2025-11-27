@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class Database {
-    // 1. Static variable untuk menyimpan satu-satunya instance
     private static Database instance;
 
     private static final String MYSQL_HOST = "localhost";
@@ -17,7 +16,6 @@ public class Database {
     private static final String DB_URL = "jdbc:mysql://" + MYSQL_HOST + ":" + MYSQL_PORT + "/" + MYSQL_DB_NAME
             + "?serverTimezone=UTC";
 
-    // 2. Private Constructor agar tidak bisa di-new sembarangan
     private Database() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -26,7 +24,6 @@ public class Database {
         }
     }
 
-    // 3. Public Static Method untuk mengakses instance (Global Access Point)
     public static synchronized Database getInstance() {
         if (instance == null) {
             instance = new Database();
@@ -34,19 +31,14 @@ public class Database {
         return instance;
     }
 
-    // Method koneksi sekarang bukan static lagi, tapi instance method
     public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DB_URL, MYSQL_USER, MYSQL_PASSWORD);
     }
 
-    // Utility untuk setup awal (bisa tetap static atau dibuat instance juga, kita
-    // buat static helper saja)
     public static void createTablesAndDummyData() {
-        // ... (Kode create table tetap sama, tapi panggil getConnection via instance)
-        try (Connection conn = getInstance().getConnection(); // Panggil via Singleton
-                Statement stmt = conn.createStatement()) {
+        try (Connection conn = getInstance().getConnection();
+             Statement stmt = conn.createStatement()) {
 
-            // ... (Salin isi create tables dari file lama di sini)
             // User table
             String createUsersTable = "CREATE TABLE IF NOT EXISTS users (" +
                     "id INT AUTO_INCREMENT PRIMARY KEY," +
@@ -55,7 +47,7 @@ public class Database {
                     "role VARCHAR(20) NOT NULL)";
             stmt.execute(createUsersTable);
 
-            // Video table
+            // Video table - DITAMBAH KOLOM thumbnail_path
             String createVideosTable = "CREATE TABLE IF NOT EXISTS videos (" +
                     "id INT AUTO_INCREMENT PRIMARY KEY," +
                     "title VARCHAR(255) NOT NULL," +
@@ -63,7 +55,8 @@ public class Database {
                     "category VARCHAR(255)," +
                     "year INT," +
                     "genre VARCHAR(100)," +
-                    "duration DOUBLE)";
+                    "duration DOUBLE," +
+                    "thumbnail_path VARCHAR(255))"; // <--- UPDATE DI SINI
             stmt.execute(createVideosTable);
 
             // Watchlist table

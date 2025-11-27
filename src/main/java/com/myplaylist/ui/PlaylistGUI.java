@@ -9,17 +9,16 @@ import java.awt.*;
 import java.util.List;
 
 public class PlaylistGUI extends JFrame {
-    // 1. Ganti DAO dengan Facade
     private AppFacade appFacade;
     private JTable videoTable;
     private DefaultTableModel tableModel;
     private User loggedInUser;
-    private JFrame loginFrame; // Referensi ke login frame untuk logout
+    private JFrame loginFrame;
     
-    public PlaylistGUI(User user, JFrame loginFrame) { // Tambah parameter loginFrame
+    public PlaylistGUI(User user, JFrame loginFrame) { 
         this.loggedInUser = user;
         this.loginFrame = loginFrame;
-        this.appFacade = new AppFacade(); // Inisialisasi Facade
+        this.appFacade = new AppFacade(); 
         this.appFacade.setCurrentUser(user);
         setTitle("My Playlist App - Welcome " + user.getUsername());
         setSize(900, 600);
@@ -43,11 +42,9 @@ public class PlaylistGUI extends JFrame {
         headerPanel.add(titleLabel, BorderLayout.WEST);
         headerPanel.add(logoutButton, BorderLayout.EAST);
 
-        // Main Layout
         setLayout(new BorderLayout());
         add(headerPanel, BorderLayout.NORTH);
 
-        // Cek Role untuk menentukan Dashboard
         if ("admin".equalsIgnoreCase(user.getRole())) {
             add(createAdminDashboard(), BorderLayout.CENTER);
         } else {
@@ -55,27 +52,24 @@ public class PlaylistGUI extends JFrame {
         }
     }
 
-    // --- DASHBOARD ADMIN (CRUD Tetap Ada) ---
+    // --- DASHBOARD ADMIN ---
     private JPanel createAdminDashboard() {
         JPanel panel = new JPanel(new BorderLayout());
 
-        // Tabel Video
         String[] columnNames = {"ID", "Title", "Creator", "Category", "Year", "Genre", "Duration"};
         tableModel = new DefaultTableModel(columnNames, 0);
         videoTable = new JTable(tableModel);
-        loadVideoData(); // Load data pakai Facade
+        loadVideoData();
 
         JScrollPane scrollPane = new JScrollPane(videoTable);
         panel.add(scrollPane, BorderLayout.CENTER);
 
-        // Tombol CRUD Admin
         JPanel buttonPanel = new JPanel();
         JButton btnAdd = new JButton("Add Video");
         JButton btnEdit = new JButton("Edit Video");
         JButton btnDelete = new JButton("Delete Video");
         JButton btnRefresh = new JButton("Refresh");
 
-        // Action Listeners Admin
         btnAdd.addActionListener(e -> showVideoForm(null));
         
         btnEdit.addActionListener(e -> {
@@ -115,16 +109,15 @@ public class PlaylistGUI extends JFrame {
         return panel;
     }
 
-    // --- DASHBOARD USER (Fitur Watchlist & Play) ---
+    // --- DASHBOARD USER ---
     private JPanel createUserDashboard() {
         JPanel panel = new JPanel(new BorderLayout());
 
-        // Tabel Video (Semua Video)
         String[] columnNames = {"ID", "Title", "Creator", "Category", "Genre", "Duration"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // User tidak bisa edit tabel langsung
+                return false;
             }
         };
         videoTable = new JTable(tableModel);
@@ -133,24 +126,19 @@ public class PlaylistGUI extends JFrame {
         JScrollPane scrollPane = new JScrollPane(videoTable);
         panel.add(scrollPane, BorderLayout.CENTER);
 
-        // Tombol Fitur User
         JPanel buttonPanel = new JPanel();
         
         JButton btnAddToWatchlist = new JButton("➕ Add to My Watchlist");
         JButton btnOpenWatchlist = new JButton("📂 Open My Watchlist");
         JButton btnRefresh = new JButton("🔄 Refresh Library");
-        
-        // Tombol PLAY (User ingin memutar video dari library utama)
         JButton btnPlay = new JButton("▶ Play Selected");
         btnPlay.setBackground(new Color(50, 200, 50));
         btnPlay.setForeground(Color.WHITE);
 
-        // Logic Add to Watchlist
         btnAddToWatchlist.addActionListener(e -> {
             int selectedRow = videoTable.getSelectedRow();
             if (selectedRow != -1) {
                 int videoId = (int) tableModel.getValueAt(selectedRow, 0);
-                // Panggil Facade
                 String result = appFacade.addToWatchlist(videoId);
                 JOptionPane.showMessageDialog(this, result);
             } else {
@@ -158,17 +146,14 @@ public class PlaylistGUI extends JFrame {
             }
         });
 
-        // Logic Open Watchlist (Membuka Jendela Baru)
         btnOpenWatchlist.addActionListener(e -> showWatchlistDialog());
 
-        // Logic Play (Placeholder untuk Iterator Temanmu)
+        // UPDATE DISINI: Buka VideoPlayer Baru
         btnPlay.addActionListener(e -> {
             int selectedRow = videoTable.getSelectedRow();
             if (selectedRow != -1) {
-                String title = (String) tableModel.getValueAt(selectedRow, 1);
-                JOptionPane.showMessageDialog(this, 
-                    "▶ Memutar Video: " + title + "\n\n(Area ini siap diimplementasikan dengan Iterator Pattern)", 
-                    "Video Player", JOptionPane.INFORMATION_MESSAGE);
+                List<Video> allVideos = appFacade.getAllVideos(); 
+                new VideoPlayer(this, allVideos, selectedRow).setVisible(true);
             } else {
                 JOptionPane.showMessageDialog(this, "Pilih video yang ingin diputar.");
             }
@@ -185,18 +170,16 @@ public class PlaylistGUI extends JFrame {
         return panel;
     }
 
-    // --- FITUR TAMBAHAN: Jendela Watchlist ---
+    // --- WATCHLIST DIALOG ---
     private void showWatchlistDialog() {
         JDialog dialog = new JDialog(this, "My Personal Watchlist", true);
         dialog.setSize(600, 400);
         dialog.setLayout(new BorderLayout());
 
-        // Tabel Watchlist
         String[] columns = {"ID", "Title", "Creator", "Genre"};
         DefaultTableModel watchModel = new DefaultTableModel(columns, 0);
         JTable watchTable = new JTable(watchModel);
         
-        // Load data khusus milik user ini
         List<Video> myVideos = appFacade.getMyWatchlist();
         if (myVideos != null) {
             for (Video v : myVideos) {
@@ -207,7 +190,6 @@ public class PlaylistGUI extends JFrame {
         JScrollPane scroll = new JScrollPane(watchTable);
         dialog.add(scroll, BorderLayout.CENTER);
 
-        // Tombol di Watchlist
         JPanel btnPanel = new JPanel();
         JButton btnRemove = new JButton("Remove from Watchlist");
         JButton btnPlayWatchlist = new JButton("▶ Play Watchlist");
@@ -217,7 +199,7 @@ public class PlaylistGUI extends JFrame {
             if (row != -1) {
                 int vidId = (int) watchModel.getValueAt(row, 0);
                 if (appFacade.removeFromWatchlist(vidId)) {
-                    watchModel.removeRow(row); // Hapus dari tabel UI langsung
+                    watchModel.removeRow(row);
                     JOptionPane.showMessageDialog(dialog, "Video dihapus dari watchlist.");
                 }
             } else {
@@ -225,10 +207,14 @@ public class PlaylistGUI extends JFrame {
             }
         });
 
+        // UPDATE DISINI: Play seluruh Watchlist
         btnPlayWatchlist.addActionListener(e -> {
-             JOptionPane.showMessageDialog(dialog, 
-                    "▶ Memutar Semua Video di Watchlist\n\n(Iterator Pattern akan masuk di sini)", 
-                    "Playlist Player", JOptionPane.INFORMATION_MESSAGE);
+            List<Video> watchlist = appFacade.getMyWatchlist();
+            if (watchlist != null && !watchlist.isEmpty()) {
+                new VideoPlayer((Frame)SwingUtilities.getWindowAncestor(dialog), watchlist, 0).setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(dialog, "Watchlist kosong.");
+            }
         });
 
         btnPanel.add(btnPlayWatchlist);
@@ -239,12 +225,10 @@ public class PlaylistGUI extends JFrame {
         dialog.setVisible(true);
     }
 
-    // --- Helper Methods ---
     private void loadVideoData() {
         tableModel.setRowCount(0);
         List<Video> videos = appFacade.getAllVideos();
         for (Video v : videos) {
-            // Kolom menyesuaikan tampilan user/admin
             if ("admin".equals(loggedInUser.getRole())) {
                 tableModel.addRow(new Object[]{v.getId(), v.getTitle(), v.getCreator(), v.getCategory(), v.getYear(), v.getGenre(), v.getDuration()});
             } else {
@@ -261,10 +245,9 @@ public class PlaylistGUI extends JFrame {
 
     private void logout() {
         this.appFacade.logout();
-        this.dispose(); // Tutup window playlist
+        this.dispose();
         if (loginFrame != null) {
-            loginFrame.setVisible(true); // Tampilkan lagi login screen
-            // Kosongkan field login jika perlu (opsional)
+            loginFrame.setVisible(true);
         } else {
              new LoginGUI().setVisible(true);
         }
