@@ -90,27 +90,106 @@ public class VideoDAO {
         }
     }
 
-    public Video getVideoById(int id) {
-        String sql = "SELECT * FROM videos WHERE id = ?";
-        try (Connection conn = Database.getInstance().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return new Video(
-                        rs.getInt("id"),
-                        rs.getString("title"),
-                        rs.getString("creator"),
-                        rs.getString("category"),
-                        rs.getInt("year"),
-                        rs.getString("genre"),
-                        rs.getDouble("duration"),
-                        rs.getString("thumbnail_path") // <--- Ambil Path
-                );
+        public Video getVideoById(int id) {
+
+            String sql = "SELECT * FROM videos WHERE id = ?";
+
+            try (Connection conn = Database.getInstance().getConnection();
+
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+                pstmt.setInt(1, id);
+
+                ResultSet rs = pstmt.executeQuery();
+
+                if (rs.next()) {
+
+                    return new Video(
+
+                            rs.getInt("id"),
+
+                            rs.getString("title"),
+
+                            rs.getString("creator"),
+
+                            rs.getString("category"),
+
+                            rs.getInt("year"),
+
+                            rs.getString("genre"),
+
+                            rs.getDouble("duration"),
+
+                            rs.getString("thumbnail_path") // <--- Ambil Path
+
+                    );
+
+                }
+
+            } catch (SQLException e) {
+
+                e.printStackTrace();
+
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+
+            return null;
+
         }
-        return null;
+
+    
+
+        public List<Video> searchVideos(String query) {
+
+            List<Video> videos = new ArrayList<>();
+
+            String sql = "SELECT * FROM videos WHERE LOWER(title) LIKE ? OR LOWER(creator) LIKE ?";
+
+            try (Connection conn = Database.getInstance().getConnection();
+
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+                String searchQuery = "%" + query.toLowerCase() + "%";
+
+                pstmt.setString(1, searchQuery);
+
+                pstmt.setString(2, searchQuery);
+
+                ResultSet rs = pstmt.executeQuery();
+
+                while (rs.next()) {
+
+                    videos.add(new Video(
+
+                            rs.getInt("id"),
+
+                            rs.getString("title"),
+
+                            rs.getString("creator"),
+
+                            rs.getString("category"),
+
+                            rs.getInt("year"),
+
+                            rs.getString("genre"),
+
+                            rs.getDouble("duration"),
+
+                            rs.getString("thumbnail_path")
+
+                    ));
+
+                }
+
+            } catch (SQLException e) {
+
+                e.printStackTrace();
+
+            }
+
+            return videos;
+
+        }
+
     }
-}
+
+    

@@ -56,6 +56,10 @@ public class AppFacade {
         return videoDAO.getAllVideos();
     }
 
+    public List<Video> searchVideos(String query) {
+        return videoDAO.searchVideos(query);
+    }
+
     // Khusus Admin
     public boolean addVideo(Video video) {
         if (currentUser != null && "admin".equals(currentUser.getRole())) {

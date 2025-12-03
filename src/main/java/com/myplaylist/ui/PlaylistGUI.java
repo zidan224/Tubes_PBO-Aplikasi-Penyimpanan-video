@@ -56,6 +56,15 @@ public class PlaylistGUI extends JFrame {
     private JPanel createAdminDashboard() {
         JPanel panel = new JPanel(new BorderLayout());
 
+        // Search Panel
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JTextField searchField = new JTextField(20);
+        JButton searchButton = new JButton("Search");
+        searchPanel.add(new JLabel("Search:"));
+        searchPanel.add(searchField);
+        searchPanel.add(searchButton);
+        panel.add(searchPanel, BorderLayout.NORTH);
+
         String[] columnNames = {"ID", "Title", "Creator", "Category", "Year", "Genre", "Duration"};
         tableModel = new DefaultTableModel(columnNames, 0);
         videoTable = new JTable(tableModel);
@@ -70,6 +79,7 @@ public class PlaylistGUI extends JFrame {
         JButton btnDelete = new JButton("Delete Video");
         JButton btnRefresh = new JButton("Refresh");
 
+        searchButton.addActionListener(e -> loadVideoData(searchField.getText()));
         btnAdd.addActionListener(e -> showVideoForm(null));
         
         btnEdit.addActionListener(e -> {
@@ -98,7 +108,10 @@ public class PlaylistGUI extends JFrame {
             }
         });
 
-        btnRefresh.addActionListener(e -> loadVideoData());
+        btnRefresh.addActionListener(e -> {
+            searchField.setText("");
+            loadVideoData();
+        });
 
         buttonPanel.add(btnAdd);
         buttonPanel.add(btnEdit);
@@ -112,6 +125,15 @@ public class PlaylistGUI extends JFrame {
     // --- DASHBOARD USER ---
     private JPanel createUserDashboard() {
         JPanel panel = new JPanel(new BorderLayout());
+
+        // Search Panel
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JTextField searchField = new JTextField(20);
+        JButton searchButton = new JButton("Search");
+        searchPanel.add(new JLabel("Search:"));
+        searchPanel.add(searchField);
+        searchPanel.add(searchButton);
+        panel.add(searchPanel, BorderLayout.NORTH);
 
         String[] columnNames = {"ID", "Title", "Creator", "Category", "Genre", "Duration"};
         tableModel = new DefaultTableModel(columnNames, 0) {
@@ -134,6 +156,8 @@ public class PlaylistGUI extends JFrame {
         JButton btnPlay = new JButton("▶ Play Selected");
         btnPlay.setBackground(new Color(50, 200, 50));
         btnPlay.setForeground(Color.WHITE);
+
+        searchButton.addActionListener(e -> loadVideoData(searchField.getText()));
 
         btnAddToWatchlist.addActionListener(e -> {
             int selectedRow = videoTable.getSelectedRow();
@@ -159,7 +183,10 @@ public class PlaylistGUI extends JFrame {
             }
         });
 
-        btnRefresh.addActionListener(e -> loadVideoData());
+        btnRefresh.addActionListener(e -> {
+            searchField.setText("");
+            loadVideoData();
+        });
 
         buttonPanel.add(btnPlay);
         buttonPanel.add(btnAddToWatchlist);
@@ -226,15 +253,72 @@ public class PlaylistGUI extends JFrame {
     }
 
     private void loadVideoData() {
-        tableModel.setRowCount(0);
-        List<Video> videos = appFacade.getAllVideos();
-        for (Video v : videos) {
-            if ("admin".equals(loggedInUser.getRole())) {
-                tableModel.addRow(new Object[]{v.getId(), v.getTitle(), v.getCreator(), v.getCategory(), v.getYear(), v.getGenre(), v.getDuration()});
+        loadVideoData(null);
+    }
+
+    private void loadVideoData(String query) {
+        tableModel.setRowCount(0); // Clear table
+
+        if (query != null && !query.trim().isEmpty()) {
+            // 1. Search Logic
+            List<Video> searchResults = appFacade.searchVideos(query);
+
+            if (!searchResults.isEmpty()) {
+                // Add search results to table
+                for (Video v : searchResults) {
+                    addVideoRowToTable(v);
+                }
             } else {
-                tableModel.addRow(new Object[]{v.getId(), v.getTitle(), v.getCreator(), v.getCategory(), v.getGenre(), v.getDuration()});
+                // Show "Not Found" message
+                addNotFoundRowToTable();
+            }
+
+            // Add Separator
+            addSeparatorRowToTable();
+
+            // 2. All Videos Logic (excluding search results)
+            List<Video> allVideos = appFacade.getAllVideos();
+            // Remove duplicates to avoid showing them twice
+            allVideos.removeAll(searchResults);
+            for (Video v : allVideos) {
+                addVideoRowToTable(v);
+            }
+
+        } else {
+            // Original behavior: load all videos
+            List<Video> videos = appFacade.getAllVideos();
+            for (Video v : videos) {
+                addVideoRowToTable(v);
             }
         }
+    }
+
+    // Helper method to add a video to the table based on role
+    private void addVideoRowToTable(Video v) {
+        if ("admin".equals(loggedInUser.getRole())) {
+            tableModel.addRow(new Object[]{v.getId(), v.getTitle(), v.getCreator(), v.getCategory(), v.getYear(), v.getGenre(), v.getDuration()});
+        } else {
+            tableModel.addRow(new Object[]{v.getId(), v.getTitle(), v.getCreator(), v.getCategory(), v.getGenre(), v.getDuration()});
+        }
+    }
+
+    // Helper method to add a separator
+    private void addSeparatorRowToTable() {
+        // For admin, 7 columns. For user, 6 columns.
+        int columnCount = tableModel.getColumnCount();
+        Object[] separator = new Object[columnCount];
+        for (int i = 0; i < columnCount; i++) {
+            separator[i] = "--------------------";
+        }
+        tableModel.addRow(separator);
+    }
+
+    // Helper method for "not found"
+    private void addNotFoundRowToTable() {
+        int columnCount = tableModel.getColumnCount();
+        Object[] notFoundRow = new Object[columnCount];
+        notFoundRow[1] = "Video tidak ditemukan"; // Message in the 'Title' column
+        tableModel.addRow(notFoundRow);
     }
 
     private void showVideoForm(Video video) {

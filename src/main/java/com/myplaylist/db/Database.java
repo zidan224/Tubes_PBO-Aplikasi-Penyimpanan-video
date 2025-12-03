@@ -47,7 +47,7 @@ public class Database {
                     "role VARCHAR(20) NOT NULL)";
             stmt.execute(createUsersTable);
 
-            // Video table - DITAMBAH KOLOM thumbnail_path
+            // Video table
             String createVideosTable = "CREATE TABLE IF NOT EXISTS videos (" +
                     "id INT AUTO_INCREMENT PRIMARY KEY," +
                     "title VARCHAR(255) NOT NULL," +
@@ -56,7 +56,7 @@ public class Database {
                     "year INT," +
                     "genre VARCHAR(100)," +
                     "duration DOUBLE," +
-                    "thumbnail_path VARCHAR(255))"; // <--- UPDATE DI SINI
+                    "thumbnail_path VARCHAR(255))";
             stmt.execute(createVideosTable);
 
             // Watchlist table
