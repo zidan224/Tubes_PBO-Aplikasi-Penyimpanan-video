@@ -1,83 +1,15 @@
 package com.myplaylist.ui;
 
-import com.myplaylist.iterator.Container; 
 import com.myplaylist.iterator.Iterator;
+import com.myplaylist.iterator.VideoListContainer; 
 import com.myplaylist.model.Video;
 
 import javax.swing.*;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.GridLayout;
-import java.awt.Image;
+import java.awt.*;
 import java.io.File;
 import java.util.List;
 
-// 1. Concrete Container (Implementasi Iterator Pattern)
-class VideoListContainer implements Container<Video> {
-    private List<Video> videos;
-
-    public VideoListContainer(List<Video> videos) {
-        this.videos = videos;
-    }
-
-    @Override
-    public Iterator<Video> getIterator() {
-        return new VideoListIterator();
-    }
-
-    // 2. Concrete Iterator
-    private class VideoListIterator implements Iterator<Video> {
-        private int index = 0;
-
-        @Override
-        public boolean hasNext() {
-            return index < videos.size() - 1;
-        }
-
-        @Override
-        public Video next() {
-            if (this.hasNext()) {
-                index++;
-                return videos.get(index);
-            }
-            return null;
-        }
-
-        @Override
-        public boolean hasPrev() {
-            return index > 0;
-        }
-
-        @Override
-        public Video prev() {
-            if (this.hasPrev()) {
-                index--;
-                return videos.get(index);
-            }
-            return null;
-        }
-
-        @Override
-        public Video current() {
-            if (index >= 0 && index < videos.size()) {
-                return videos.get(index);
-            }
-            return null;
-        }
-        
-        @SuppressWarnings("unused")
-        public void setIndex(int idx) {
-            if (idx >= 0 && idx < videos.size()) {
-                this.index = idx;
-            }
-        }
-    }
-}
-
-// 3. UI Player Class
+// Class UI Player sekarang bersih dari logika Iterator internal
 public class VideoPlayer extends JDialog {
     private JLabel imageLabel;
     private JLabel titleLabel;
@@ -96,15 +28,18 @@ public class VideoPlayer extends JDialog {
         setLayout(new BorderLayout());
         setLocationRelativeTo(owner);
 
-        // Inisialisasi Iterator Pattern
+        // --- Inisialisasi Iterator Pattern (Menggunakan Class Eksternal) ---
         VideoListContainer container = new VideoListContainer(playlist);
         iterator = container.getIterator();
         
+        // Set posisi awal (tetap menggunakan Reflection agar tidak perlu casting paksa)
         try {
+            // Kita mencari method "setIndex" di dalam objek iterator yang konkrit
             var method = iterator.getClass().getMethod("setIndex", int.class);
             method.invoke(iterator, startIndex);
         } catch (Exception e) { 
-            e.printStackTrace(); 
+            // Jika gagal set index, dia akan mulai dari 0 (default)
+            System.err.println("Warning: Could not set start index. Starting from beginning.");
         }
 
         // --- TAMPILAN (UI) ---
@@ -138,7 +73,6 @@ public class VideoPlayer extends JDialog {
         controls.setBackground(Color.BLACK);
         controls.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
         
-        // --- PERUBAHAN DI SINI (Hapus Simbol Aneh) ---
         btnPrev = new JButton("<< Back");
         btnPlay = new JButton("|> Play");
         btnNext = new JButton("Next >>");
@@ -152,7 +86,7 @@ public class VideoPlayer extends JDialog {
         controls.add(btnNext);
         add(controls, BorderLayout.SOUTH);
 
-        // --- LOGIKA TOMBOL ---
+        // --- LOGIKA TOMBOL (Tetap Sama) ---
         btnNext.addActionListener(e -> {
             if (iterator.hasNext()) {
                 loadVideo(iterator.next());
@@ -172,14 +106,15 @@ public class VideoPlayer extends JDialog {
         btnPlay.addActionListener(e -> {
             isPlaying = !isPlaying;
             if (isPlaying) {
-                btnPlay.setText("|| Pause"); // Ganti simbol
+                btnPlay.setText("|| Pause");
                 btnPlay.setBackground(new Color(255, 100, 100));
             } else {
-                btnPlay.setText("|> Play"); // Ganti simbol
+                btnPlay.setText("|> Play");
                 btnPlay.setBackground(new Color(100, 255, 100));
             }
         });
 
+        // Load video pertama kali
         loadVideo(iterator.current());
     }
 
@@ -189,8 +124,9 @@ public class VideoPlayer extends JDialog {
         titleLabel.setText(v.getTitle());
         infoLabel.setText(v.getCreator() + " - " + v.getGenre() + " - " + v.getYear());
         
+        // Reset tombol play saat ganti video
         isPlaying = true;
-        btnPlay.setText("|| Pause"); // Ganti simbol
+        btnPlay.setText("|| Pause");
         btnPlay.setBackground(new Color(255, 100, 100));
 
         if (v.getThumbnailPath() != null && !v.getThumbnailPath().isEmpty()) {
