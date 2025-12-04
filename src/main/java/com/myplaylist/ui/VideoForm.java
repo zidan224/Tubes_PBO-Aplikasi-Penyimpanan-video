@@ -28,8 +28,8 @@ public class VideoForm extends JDialog {
     private JButton saveButton = new JButton("Save");
     private JButton cancelButton = new JButton("Cancel");
 
-    private AppFacade appFacade;
-    private Video video;
+    private transient AppFacade appFacade;
+    private transient Video video;
 
     public VideoForm(Frame parent, AppFacade appFacade, Video video) {
         super(parent, "Video Details", true);

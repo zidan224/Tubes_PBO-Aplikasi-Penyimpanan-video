@@ -29,7 +29,7 @@ public class WatchlistDAO {
                         rs.getInt("year"),
                         rs.getString("genre"),
                         rs.getDouble("duration"),
-                        rs.getString("thumbnail_path") // <--- Ambil thumbnail juga
+                        rs.getString("thumbnail_path") 
                 ));
             }
         } catch (SQLException e) {

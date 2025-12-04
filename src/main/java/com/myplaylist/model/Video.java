@@ -8,9 +8,10 @@ public class Video {
     private int year;
     private String genre;
     private double duration;
-    private String thumbnailPath; // <--- Field Baru
+    private String thumbnailPath; 
 
     // Constructor Lengkap (dengan thumbnail)
+    @SuppressWarnings("java:S107")
     public Video(int id, String title, String creator, String category, int year, String genre, double duration, String thumbnailPath) {
         this.id = id;
         this.title = title;
@@ -27,11 +28,8 @@ public class Video {
         this(id, title, creator, category, year, genre, duration, null);
     }
 
-    // Getter Setter Baru
+    // getter setter
     public String getThumbnailPath() { return thumbnailPath; }
-    public void setThumbnailPath(String thumbnailPath) { this.thumbnailPath = thumbnailPath; }
-
-    // Getter Setter Lama
     public int getId() { return id; }
     public String getTitle() { return title; }
     public String getCreator() { return creator; }
@@ -40,6 +38,7 @@ public class Video {
     public String getGenre() { return genre; }
     public double getDuration() { return duration; }
     
+    public void setThumbnailPath(String thumbnailPath) { this.thumbnailPath = thumbnailPath; }
     public void setTitle(String title) { this.title = title; }
     public void setCreator(String creator) { this.creator = creator; }
     public void setCategory(String category) { this.category = category; }

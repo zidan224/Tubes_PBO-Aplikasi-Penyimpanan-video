@@ -1,6 +1,5 @@
 package com.myplaylist.ui;
 
-// Import spesifik untuk interface kamu agar tidak konflik dengan java.awt.Container
 import com.myplaylist.iterator.Container; 
 import com.myplaylist.iterator.Iterator;
 import com.myplaylist.model.Video;
@@ -69,6 +68,7 @@ class VideoListContainer implements Container<Video> {
             return null;
         }
         
+        @SuppressWarnings("unused")
         public void setIndex(int idx) {
             if (idx >= 0 && idx < videos.size()) {
                 this.index = idx;
@@ -82,9 +82,12 @@ public class VideoPlayer extends JDialog {
     private JLabel imageLabel;
     private JLabel titleLabel;
     private JLabel infoLabel;
-    private JButton btnPrev, btnPlay, btnNext;
+    private JButton btnPrev; 
+    private JButton btnPlay;
+    private JButton btnNext;
+    private static final String FONT_NAME = "Arial";
     
-    private Iterator<Video> iterator;
+    private transient Iterator<Video> iterator;
     private boolean isPlaying = false;
 
     public VideoPlayer(Frame owner, List<Video> playlist, int startIndex) {
@@ -120,11 +123,11 @@ public class VideoPlayer extends JDialog {
         
         titleLabel = new JLabel("Title", SwingConstants.CENTER);
         titleLabel.setForeground(Color.WHITE);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        titleLabel.setFont(new Font(FONT_NAME, Font.BOLD, 22));
         
         infoLabel = new JLabel("Creator - Genre", SwingConstants.CENTER);
         infoLabel.setForeground(Color.LIGHT_GRAY);
-        infoLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        infoLabel.setFont(new Font(FONT_NAME, Font.PLAIN, 14));
         
         infoPanel.add(titleLabel);
         infoPanel.add(infoLabel);
@@ -211,7 +214,7 @@ public class VideoPlayer extends JDialog {
         btn.setBackground(Color.DARK_GRAY);
         btn.setForeground(Color.WHITE);
         btn.setFocusPainted(false);
-        btn.setFont(new Font("Arial", Font.BOLD, 14));
+        btn.setFont(new Font(FONT_NAME, Font.BOLD, 14));
         btn.setPreferredSize(new Dimension(100, 40));
     }
 }

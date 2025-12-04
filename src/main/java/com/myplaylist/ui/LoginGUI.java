@@ -5,8 +5,7 @@ import com.myplaylist.model.User;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 
 public class LoginGUI extends JFrame {
     private JTextField usernameField;
@@ -17,7 +16,7 @@ public class LoginGUI extends JFrame {
     public LoginGUI() {
         setTitle("Login");
         setSize(400, 200);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
         JPanel panel = new JPanel(new GridLayout(3, 2, 10, 10));
@@ -39,19 +38,9 @@ public class LoginGUI extends JFrame {
 
         add(panel);
 
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handleLogin();
-            }
-        });
+        loginButton.addActionListener(e -> handleLogin());
 
-        registerButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openRegister();
-            }
-        });
+        registerButton.addActionListener(e -> openRegister());
     }
 
     private void handleLogin() {
