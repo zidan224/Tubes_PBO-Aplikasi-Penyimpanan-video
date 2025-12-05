@@ -8,9 +8,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-// Class UI Player sekarang bersih dari logika Iterator internal
 public class VideoPlayer extends JDialog {
+    private static final Logger LOGGER = Logger.getLogger(VideoPlayer.class.getName());
+
     private JLabel imageLabel;
     private JLabel titleLabel;
     private JLabel infoLabel;
@@ -28,30 +31,22 @@ public class VideoPlayer extends JDialog {
         setLayout(new BorderLayout());
         setLocationRelativeTo(owner);
 
-        // --- Inisialisasi Iterator Pattern (Menggunakan Class Eksternal) ---
         VideoListContainer container = new VideoListContainer(playlist);
         iterator = container.getIterator();
         
-        // Set posisi awal (tetap menggunakan Reflection agar tidak perlu casting paksa)
         try {
-            // Kita mencari method "setIndex" di dalam objek iterator yang konkrit
             var method = iterator.getClass().getMethod("setIndex", int.class);
             method.invoke(iterator, startIndex);
         } catch (Exception e) { 
-            // Jika gagal set index, dia akan mulai dari 0 (default)
-            System.err.println("Warning: Could not set start index. Starting from beginning.");
+            LOGGER.log(Level.WARNING, "Warning: Could not set start index. Starting from beginning.", e);
         }
 
-        // --- TAMPILAN (UI) ---
-        
-        // 1. Area Tengah: Thumbnail Besar
         imageLabel = new JLabel("No Thumbnail Available", SwingConstants.CENTER);
         imageLabel.setBackground(Color.BLACK);
         imageLabel.setOpaque(true);
         imageLabel.setForeground(Color.GRAY);
         add(imageLabel, BorderLayout.CENTER);
 
-        // 2. Area Atas: Judul Video
         JPanel infoPanel = new JPanel(new GridLayout(2, 1));
         infoPanel.setBackground(new Color(30, 30, 30));
         infoPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -68,7 +63,6 @@ public class VideoPlayer extends JDialog {
         infoPanel.add(infoLabel);
         add(infoPanel, BorderLayout.NORTH);
 
-        // 3. Area Bawah: Tombol Kontrol
         JPanel controls = new JPanel();
         controls.setBackground(Color.BLACK);
         controls.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
@@ -86,7 +80,6 @@ public class VideoPlayer extends JDialog {
         controls.add(btnNext);
         add(controls, BorderLayout.SOUTH);
 
-        // --- LOGIKA TOMBOL (Tetap Sama) ---
         btnNext.addActionListener(e -> {
             if (iterator.hasNext()) {
                 loadVideo(iterator.next());
@@ -114,7 +107,6 @@ public class VideoPlayer extends JDialog {
             }
         });
 
-        // Load video pertama kali
         loadVideo(iterator.current());
     }
 
@@ -124,7 +116,6 @@ public class VideoPlayer extends JDialog {
         titleLabel.setText(v.getTitle());
         infoLabel.setText(v.getCreator() + " - " + v.getGenre() + " - " + v.getYear());
         
-        // Reset tombol play saat ganti video
         isPlaying = true;
         btnPlay.setText("|| Pause");
         btnPlay.setBackground(new Color(255, 100, 100));

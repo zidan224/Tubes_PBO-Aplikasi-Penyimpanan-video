@@ -4,9 +4,15 @@ import com.myplaylist.facade.AppFacade;
 import com.myplaylist.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.util.logging.Level;
+import java.util.logging.Logger; 
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class FacadeTest {
+
+    // 2. Inisialisasi Logger
+    private static final Logger LOGGER = Logger.getLogger(FacadeTest.class.getName());
 
     private AppFacade appFacade;
 
@@ -16,10 +22,9 @@ public class FacadeTest {
     }
 
     // TEST 1: Cek Proteksi Watchlist (Security Check)
-    // Skenario: User mencoba akses fitur watchlist TANPA login
     @Test
     void testAccessWatchlistWithoutLogin() {
-        System.out.println("\n=== Test 1: Proteksi Watchlist (Tanpa Login) ===");
+        LOGGER.info("\n=== Test 1: Proteksi Watchlist (Tanpa Login) ===");
         
         assertNull(appFacade.getCurrentUser(), "Awalnya user harus null");
 
@@ -27,15 +32,14 @@ public class FacadeTest {
         
         assertEquals("Please login first.", result, "Harus menolak akses jika belum login");
         
-        System.out.println(">>> Hasil: " + result);
-        System.out.println(">>> Status: LULUS (Sistem menolak akses)");
+        LOGGER.log(Level.INFO, ">>> Hasil: {0}", result);
+        LOGGER.info(">>> Status: LULUS (Sistem menolak akses)");
     }
 
     // TEST 2: Alur Register -> Login -> Cek State -> Logout
-    // Skenario Lengkap User Journey
     @Test
     void testUserSessionFlow() {
-        System.out.println("\n=== Test 2: Alur User Session (Register-Login-Logout) ===");
+        LOGGER.info("\n=== Test 2: Alur User Session (Register-Login-Logout) ===");
 
         // 1. REGISTER USER BARU 
         String uniqueUser = "UserTes_" + System.currentTimeMillis();
@@ -43,36 +47,36 @@ public class FacadeTest {
         
         boolean regSuccess = appFacade.register(uniqueUser, password);
         assertTrue(regSuccess, "Register user baru harus berhasil");
-        System.out.println("1. Register User: " + uniqueUser);
+        
+        LOGGER.log(Level.INFO, "1. Register User: {0}", uniqueUser);
 
         // 2. LOGIN
         boolean loginSuccess = appFacade.login(uniqueUser, password);
         assertTrue(loginSuccess, "Login harus berhasil dengan user yang baru dibuat");
         
-        // Cek apakah State Facade berubah (currentUser terisi)
         User currentUser = appFacade.getCurrentUser();
         assertNotNull(currentUser, "Setelah login, currentUser tidak boleh null");
         assertEquals(uniqueUser, currentUser.getUsername(), "Username yang login harus sesuai");
-        System.out.println("2. Login Sukses. Current User: " + currentUser.getUsername());
+        LOGGER.info("2. Login Sukses. Current User: " + currentUser.getUsername());
 
         // 3. LOGOUT
         appFacade.logout();
         assertNull(appFacade.getCurrentUser(), "Setelah logout, currentUser harus null kembali");
-        System.out.println("3. Logout Sukses.");
+        LOGGER.info("3. Logout Sukses.");
         
-        System.out.println(">>> Status: LULUS (Alur Session Valid)");
+        LOGGER.info(">>> Status: LULUS (Alur Session Valid)");
     }
 
     // TEST 3: Cek Login Gagal
     @Test
     void testLoginFailed() {
-        System.out.println("\n=== Test 3: Login Gagal ===");
+        LOGGER.info("\n=== Test 3: Login Gagal ===");
         
         boolean result = appFacade.login("user_hantu_belau", "password_ngawur");
         
         assertFalse(result, "Login harus gagal jika user tidak ada");
         assertNull(appFacade.getCurrentUser(), "User tidak boleh tersimpan jika login gagal");
         
-        System.out.println(">>> Status: LULUS (Login gagal ditangani dengan benar)");
+        LOGGER.info(">>> Status: LULUS (Login gagal ditangani dengan benar)");
     }
 }

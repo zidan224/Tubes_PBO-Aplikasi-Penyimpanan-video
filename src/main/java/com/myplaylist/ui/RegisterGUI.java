@@ -44,10 +44,7 @@ public class RegisterGUI extends JFrame {
 
         add(panel);
 
-        // SOLUSI WARNING 2: Ubah Anonymous Class menjadi Lambda Expression
         registerButton.addActionListener(e -> handleRegister());
-
-        // SOLUSI WARNING 2: Ubah Anonymous Class menjadi Lambda Expression
         loginButton.addActionListener(e -> openLogin());
     }
 

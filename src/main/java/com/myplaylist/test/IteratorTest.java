@@ -8,87 +8,93 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger; 
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class IteratorTest {
 
+    private static final Logger LOGGER = Logger.getLogger(IteratorTest.class.getName());
+
+    private static final String TITLE_A = "Video A";
+    private static final String TITLE_B = "Video B";
+    private static final String TITLE_C = "Video C";
+
     private Container<Video> container;
-    private List<Video> dummyVideos;
 
     @BeforeEach
     void setUp() {
-        // Data dummy
-        dummyVideos = new ArrayList<>();
-        dummyVideos.add(new Video(1, "Video A", "Creator 1", "Edu", 2023, "Tech", 10.0, "img/a.jpg"));
-        dummyVideos.add(new Video(2, "Video B", "Creator 2", "Ent", 2023, "Vlog", 15.0, "img/b.jpg"));
-        dummyVideos.add(new Video(3, "Video C", "Creator 3", "Edu", 2024, "Doc", 20.0, "img/c.jpg"));
+        List<Video> dummyVideos = new ArrayList<>();
+        
+        dummyVideos.add(new Video(1, TITLE_A, "Creator 1", "Edu", 2023, "Tech", 10.0, "img/a.jpg"));
+        dummyVideos.add(new Video(2, TITLE_B, "Creator 2", "Ent", 2023, "Vlog", 15.0, "img/b.jpg"));
+        dummyVideos.add(new Video(3, TITLE_C, "Creator 3", "Edu", 2024, "Doc", 20.0, "img/c.jpg"));
 
-        // Masukkan ke Container kita
         container = new VideoListContainer(dummyVideos);
     }
 
     @Test
     void testForwardTraversal() {
-        System.out.println("=== Test 1: Maju (Next) ===");
+        LOGGER.info("=== Test 1: Maju (Next) ===");
         Iterator<Video> iterator = container.getIterator();
 
         // Cek Video 1
         assertTrue(iterator.hasNext(), "Harus ada video pertama");
         Video v1 = iterator.next();
-        assertEquals("Video A", v1.getTitle());
-        System.out.println("1. " + v1.getTitle());
+        assertEquals(TITLE_A, v1.getTitle());
 
         // Cek Video 2
         assertTrue(iterator.hasNext());
         Video v2 = iterator.next();
-        assertEquals("Video B", v2.getTitle());
-        System.out.println("2. " + v2.getTitle());
+        assertEquals(TITLE_B, v2.getTitle());
 
         // Cek Video 3
         assertTrue(iterator.hasNext());
         Video v3 = iterator.next();
-        assertEquals("Video C", v3.getTitle());
-        System.out.println("3. " + v3.getTitle());
+        assertEquals(TITLE_C, v3.getTitle());
 
+        // Pastikan habis
         assertFalse(iterator.hasNext(), "Video harusnya sudah habis");
         assertNull(iterator.next(), "Jika habis, next() return null");
         
-        System.out.println(">>> Status: LULUS (Maju Berhasil)");
+        LOGGER.info(">>> Status: LULUS (Maju Berhasil)");
     }
 
     @Test
     void testBackwardTraversal() {
-        System.out.println("\n=== Test 2: Mundur (Prev) ===");
+        LOGGER.info("\n=== Test 2: Mundur (Prev) ===");
         Iterator<Video> iterator = container.getIterator();
 
+        // Maju dulu sampai akhir (index ada di ujung)
         while(iterator.hasNext()) {
             iterator.next();
         }
 
+        // Sekarang kita tes Mundur
         assertTrue(iterator.hasPrev(), "Harus bisa mundur dari akhir");
         Video v3 = iterator.prev();
-        assertEquals("Video C", v3.getTitle());
-        System.out.println("Mundur ke: " + v3.getTitle());
+        assertEquals(TITLE_C, v3.getTitle());
 
         assertTrue(iterator.hasPrev());
         Video v2 = iterator.prev();
-        assertEquals("Video B", v2.getTitle());
-        System.out.println("Mundur ke: " + v2.getTitle());
+        assertEquals(TITLE_B, v2.getTitle());
         
-
-        System.out.println(">>> Status: LULUS (Mundur Berhasil)");
+        LOGGER.info(">>> Status: LULUS (Mundur Berhasil)");
     }
     
     @Test
     void testEmptyList() {
-        System.out.println("\n=== Test 3: List Kosong ===");
-        Container<Video> emptyContainer = new VideoListContainer(new ArrayList<>());
+        LOGGER.info("\n=== Test 3: List Kosong ===");
+        
+        // Gunakan Collections.emptyList() agar lebih efisien
+        Container<Video> emptyContainer = new VideoListContainer(Collections.emptyList());
         Iterator<Video> emptyIterator = emptyContainer.getIterator();
         
         assertFalse(emptyIterator.hasNext(), "List kosong tidak boleh punya next");
         assertNull(emptyIterator.next(), "Next pada list kosong harus null");
-        System.out.println(">>> Status: LULUS (Aman)");
+        
+        LOGGER.info(">>> Status: LULUS (Aman)");
     }
 }
