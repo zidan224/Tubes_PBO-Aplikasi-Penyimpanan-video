@@ -23,13 +23,13 @@ public class VideoForm extends JDialog {
     // Image Upload Components
     private JLabel imagePreviewLabel = new JLabel("No Image", SwingConstants.CENTER);
     private JButton uploadButton = new JButton("Upload Thumbnail");
-    private String selectedImagePath = null; // Menyimpan path gambar
+    private String selectedImagePath = null; 
 
     private JButton saveButton = new JButton("Save");
     private JButton cancelButton = new JButton("Cancel");
 
-    private AppFacade appFacade;
-    private Video video;
+    private transient AppFacade appFacade;
+    private transient Video video;
 
     public VideoForm(Frame parent, AppFacade appFacade, Video video) {
         super(parent, "Video Details", true);

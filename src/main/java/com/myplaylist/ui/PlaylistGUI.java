@@ -9,10 +9,14 @@ import java.awt.*;
 import java.util.List;
 
 public class PlaylistGUI extends JFrame {
-    private AppFacade appFacade;
+    private static final String TITLE = "title";
+    private static final String GENRE = "genre";
+    private static final String CREATOR = "creator";
+    
+    private transient AppFacade appFacade;
     private JTable videoTable;
     private DefaultTableModel tableModel;
-    private User loggedInUser;
+    private transient User loggedInUser;
     private JFrame loginFrame;
     
     public PlaylistGUI(User user, JFrame loginFrame) { 
@@ -22,7 +26,7 @@ public class PlaylistGUI extends JFrame {
         this.appFacade.setCurrentUser(user);
         setTitle("My Playlist App - Welcome " + user.getUsername());
         setSize(900, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
         // Header Panel
@@ -65,7 +69,7 @@ public class PlaylistGUI extends JFrame {
         searchPanel.add(searchButton);
         panel.add(searchPanel, BorderLayout.NORTH);
 
-        String[] columnNames = {"ID", "Title", "Creator", "Category", "Year", "Genre", "Duration"};
+        String[] columnNames = {"ID", TITLE, CREATOR, "Category", "Year", GENRE, "Duration"};
         tableModel = new DefaultTableModel(columnNames, 0);
         videoTable = new JTable(tableModel);
         loadVideoData();
@@ -98,10 +102,8 @@ public class PlaylistGUI extends JFrame {
             if (selectedRow != -1) {
                 int id = (int) tableModel.getValueAt(selectedRow, 0);
                 int confirm = JOptionPane.showConfirmDialog(this, "Are you sure?", "Delete", JOptionPane.YES_NO_OPTION);
-                if (confirm == JOptionPane.YES_OPTION) {
-                    if (appFacade.deleteVideo(id)) {
-                        loadVideoData();
-                    }
+                if (confirm == JOptionPane.YES_OPTION && appFacade.deleteVideo(id)) {
+                    loadVideoData();
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "Select a video to delete.");
@@ -135,7 +137,7 @@ public class PlaylistGUI extends JFrame {
         searchPanel.add(searchButton);
         panel.add(searchPanel, BorderLayout.NORTH);
 
-        String[] columnNames = {"ID", "Title", "Creator", "Category", "Genre", "Duration"};
+        String[] columnNames = {"ID", TITLE, CREATOR, "Category", GENRE, "Duration"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -203,7 +205,7 @@ public class PlaylistGUI extends JFrame {
         dialog.setSize(600, 400);
         dialog.setLayout(new BorderLayout());
 
-        String[] columns = {"ID", "Title", "Creator", "Genre"};
+        String[] columns = {"ID", TITLE, CREATOR, GENRE};
         DefaultTableModel watchModel = new DefaultTableModel(columns, 0);
         JTable watchTable = new JTable(watchModel);
         

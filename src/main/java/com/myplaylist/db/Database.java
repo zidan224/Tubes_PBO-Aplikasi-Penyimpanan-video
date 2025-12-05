@@ -4,8 +4,12 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+@SuppressWarnings("java:S2115")
 public class Database {
+    private static final Logger LOGGER = Logger.getLogger(Database.class.getName());
     private static Database instance;
 
     private static final String MYSQL_HOST = "localhost";
@@ -20,7 +24,7 @@ public class Database {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "MySQL JDBC Driver not found", e);
         }
     }
 

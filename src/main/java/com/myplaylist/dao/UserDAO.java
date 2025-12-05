@@ -3,17 +3,28 @@ package com.myplaylist.dao; // 1. Package disesuaikan
 import com.myplaylist.db.Database; // Import koneksi database
 import com.myplaylist.model.User; // Import model user
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
 
 public class UserDAO {
+    // Setup logger
+    private static final Logger LOGGER = Logger.getLogger(UserDAO.class.getName());
+
+    // Setup Konstanta
+    private static final String COL_ID = "id";
+    private static final String COL_USERNAME = "username";
+    private static final String COL_PASSWORD = "password";
+    private static final String COL_ROLE = "role";
+    private static final String SELECT_ALL_USERS = 
+        "SELECT " + COL_ID + ", " + COL_USERNAME + ", " + COL_PASSWORD + ", " + COL_ROLE + " FROM users";
 
     // Fitur Register
     public boolean addUser(User user) {
         // ID tidak perlu dimasukkan karena AUTO_INCREMENT
-        String sql = "INSERT INTO users(username, password, role) VALUES(?, ?, ?)";
+        String sql = "INSERT INTO users(" + COL_USERNAME + ", " + COL_PASSWORD + ", " + COL_ROLE + ") VALUES(?, ?, ?)";
 
         try (Connection conn = Database.getInstance().getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -25,14 +36,14 @@ public class UserDAO {
             pstmt.executeUpdate();
             return true;
         } catch (SQLException e) {
-            System.err.println("Gagal Register: " + e.getMessage());
+            LOGGER.log(Level.SEVERE, "Gagal Register User", e);
             return false;
         }
     }
 
     // Fitur Login
     public User findUser(String username, String password) {
-        String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
+        String sql = SELECT_ALL_USERS + " WHERE " + COL_USERNAME + " = ? AND " + COL_PASSWORD + " = ?";
 
         try (Connection conn = Database.getInstance().getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -45,9 +56,9 @@ public class UserDAO {
             if (rs.next()) {
                 // 2. PERBAIKAN UTAMA: Ambil ID dari database!
                 return new User(
-                        rs.getInt("id"), // Ambil kolom ID
-                        rs.getString("username"),
-                        rs.getString("password"),
+                        rs.getInt(COL_ID), // Ambil kolom ID
+                        rs.getString(COL_USERNAME),
+                        rs.getString(COL_PASSWORD),
                         rs.getString("role"));
             }
         } catch (SQLException e) {
@@ -58,7 +69,7 @@ public class UserDAO {
 
     // Fitur Cek Username (Biar gak dobel saat register)
     public User findUserByUsername(String username) {
-        String sql = "SELECT * FROM users WHERE username = ?";
+        String sql = SELECT_ALL_USERS + " WHERE " + COL_USERNAME + " = ?";
 
         try (Connection conn = Database.getInstance().getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -71,12 +82,12 @@ public class UserDAO {
                 // Ambil ID juga disini
                 return new User(
                         rs.getInt("id"),
-                        rs.getString("username"),
-                        rs.getString("password"),
+                        rs.getString(COL_USERNAME),
+                        rs.getString(COL_PASSWORD),
                         rs.getString("role"));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error finding user by username", e);
         }
         return null;
     }

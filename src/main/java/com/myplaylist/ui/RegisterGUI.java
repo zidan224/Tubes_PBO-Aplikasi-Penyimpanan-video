@@ -5,8 +5,7 @@ import com.myplaylist.model.User;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 
 public class RegisterGUI extends JFrame {
     private JTextField usernameField;
@@ -14,11 +13,12 @@ public class RegisterGUI extends JFrame {
     private JPasswordField confirmPasswordField;
     private JButton registerButton;
     private JButton loginButton;
+    private static final String ERROR_TITLE = "Error";  
 
     public RegisterGUI() {
         setTitle("Register");
         setSize(400, 250);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
         JPanel panel = new JPanel(new GridLayout(4, 2, 10, 10));
@@ -44,19 +44,8 @@ public class RegisterGUI extends JFrame {
 
         add(panel);
 
-        registerButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handleRegister();
-            }
-        });
-
-        loginButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openLogin();
-            }
-        });
+        registerButton.addActionListener(e -> handleRegister());
+        loginButton.addActionListener(e -> openLogin());
     }
 
     private void handleRegister() {
@@ -65,12 +54,12 @@ public class RegisterGUI extends JFrame {
         String confirmPassword = new String(confirmPasswordField.getPassword());
 
         if (username.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Username and password cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Username and password cannot be empty.", ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         if (!password.equals(confirmPassword)) {
-            JOptionPane.showMessageDialog(this, "Passwords do not match.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Passwords do not match.", ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -82,7 +71,7 @@ public class RegisterGUI extends JFrame {
             dispose(); // Close the register window
             new PlaylistGUI(newUser, new LoginGUI()).setVisible(true); // Open the main app window
         } else {
-            JOptionPane.showMessageDialog(this, "Registration failed. Username might already exist.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Registration failed. Username might already exist.", ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
         }
     }
 

@@ -7,25 +7,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VideoDAO {
+    private static final String COL_ID = "id";
+    private static final String COL_TITLE = "title";
+    private static final String COL_CREATOR = "creator";
+    private static final String COL_CATEGORY = "category";
+    private static final String COL_YEAR = "year";
+    private static final String COL_GENRE = "genre";
+    private static final String COL_DURATION = "duration";
+    private static final String COL_THUMBNAIL = "thumbnail_path";
+    private static final String SELECT_ALL_COLUMNS = 
+        "SELECT " + COL_ID + ", " + COL_TITLE + ", " + COL_CREATOR + ", " + 
+        COL_CATEGORY + ", " + COL_YEAR + ", " + COL_GENRE + ", " + 
+        COL_DURATION + ", " + COL_THUMBNAIL + " FROM videos";
 
     public List<Video> getAllVideos() {
         List<Video> videos = new ArrayList<>();
-        String sql = "SELECT * FROM videos";
-
+    
         try (Connection conn = Database.getInstance().getConnection();
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             ResultSet rs = stmt.executeQuery(SELECT_ALL_COLUMNS)) {
 
             while (rs.next()) {
                 videos.add(new Video(
                         rs.getInt("id"),
-                        rs.getString("title"),
-                        rs.getString("creator"),
-                        rs.getString("category"),
+                        rs.getString(COL_TITLE),
+                        rs.getString(COL_CREATOR),
+                        rs.getString(COL_CATEGORY),
                         rs.getInt("year"),
-                        rs.getString("genre"),
-                        rs.getDouble("duration"),
-                        rs.getString("thumbnail_path") // <--- Ambil Path
+                        rs.getString(COL_GENRE),
+                        rs.getDouble(COL_DURATION),
+                        rs.getString(COL_THUMBNAIL) // <--- Ambil Path
                 ));
             }
         } catch (SQLException e) {
@@ -91,8 +102,7 @@ public class VideoDAO {
     }
 
         public Video getVideoById(int id) {
-
-            String sql = "SELECT * FROM videos WHERE id = ?";
+            String sql = SELECT_ALL_COLUMNS + " WHERE " + COL_ID + " = ?";
 
             try (Connection conn = Database.getInstance().getConnection();
 
@@ -108,19 +118,19 @@ public class VideoDAO {
 
                             rs.getInt("id"),
 
-                            rs.getString("title"),
+                            rs.getString(COL_TITLE),
 
-                            rs.getString("creator"),
+                            rs.getString(COL_CREATOR),
 
-                            rs.getString("category"),
+                            rs.getString(COL_CATEGORY),
 
                             rs.getInt("year"),
 
-                            rs.getString("genre"),
+                            rs.getString(COL_GENRE),
 
-                            rs.getDouble("duration"),
+                            rs.getDouble(COL_DURATION),
 
-                            rs.getString("thumbnail_path") // <--- Ambil Path
+                            rs.getString(COL_THUMBNAIL) // <--- Ambil Path
 
                     );
 
@@ -142,7 +152,7 @@ public class VideoDAO {
 
             List<Video> videos = new ArrayList<>();
 
-            String sql = "SELECT * FROM videos WHERE LOWER(title) LIKE ? OR LOWER(creator) LIKE ?";
+            String sql = SELECT_ALL_COLUMNS + " WHERE LOWER(" + COL_TITLE + ") LIKE ? OR LOWER(" + COL_CREATOR + ") LIKE ?";
 
             try (Connection conn = Database.getInstance().getConnection();
 
@@ -162,19 +172,19 @@ public class VideoDAO {
 
                             rs.getInt("id"),
 
-                            rs.getString("title"),
+                            rs.getString(COL_TITLE),
 
-                            rs.getString("creator"),
+                            rs.getString(COL_CREATOR),
 
-                            rs.getString("category"),
+                            rs.getString(COL_CATEGORY),
 
                             rs.getInt("year"),
 
-                            rs.getString("genre"),
+                            rs.getString(COL_GENRE),
 
-                            rs.getDouble("duration"),
+                            rs.getDouble(COL_DURATION),
 
-                            rs.getString("thumbnail_path")
+                            rs.getString(COL_THUMBNAIL)
 
                     ));
 
